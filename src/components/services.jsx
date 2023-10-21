@@ -1,4 +1,9 @@
 import React from "react";
+import { Link } from 'react-router-dom';
+
+function openConsolePage() {
+  window.open('pages/index.html');
+}
 
 export const Services = (props) => {
   return (
@@ -11,12 +16,15 @@ export const Services = (props) => {
             dapibus leonec.
           </p>
         </div>
+
         <div className="row">
           {props.data
             ? props.data.map((d, i) => (
                 <div key={`${d.name}-${i}`} className="col-md-4">
                   {" "}
-                  <i className={d.icon}></i>
+                  {/* 在这里包装图标，点击时调用handleIconClick函数 */}
+                  {/* <a onclick="window.open(document.URL, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');"> */}
+                    <i className={d.icon} onClick={openConsolePage}></i>
                   <div className="service-desc">
                     <h3>{d.name}</h3>
                     <p>{d.text}</p>
