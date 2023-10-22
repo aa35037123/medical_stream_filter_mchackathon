@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from 'react-router-dom';
 
 function openConsolePage() {
-  window.open('pages/index.html');
+  window.open('pages/console.html');
 }
 
 export const Services = (props) => {

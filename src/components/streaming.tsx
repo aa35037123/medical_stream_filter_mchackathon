@@ -4,13 +4,13 @@ import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 import React from 'react'
 
-const Emoji = () => {
+export default function Emoji() {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   const loadModels = async () => {
-    const MODEL_URL = `../models`;
+    const MODEL_URL = `models`;
     await Promise.all([
       faceapi.nets.tinyFaceDetector.load(MODEL_URL),
       faceapi.nets.faceExpressionNet.load(MODEL_URL),
@@ -89,8 +89,8 @@ const Emoji = () => {
         <Head>
           <title>Face2Emoji</title>
           <meta name="description" content="Mask Emoji to your face" />
-          <meta property="og:image" key="ogImage" content="../emojis/happy.png" />
-          <link rel="icon" href="../emojis/happy.png" />
+          <meta property="og:image" key="ogImage" content="emojis/happy.png" />
+          <link rel="icon" href="emojis/happy.png" />
         </Head>
         <header>
           <h1>Face2Emoji</h1>
@@ -103,5 +103,3 @@ const Emoji = () => {
     </>
   );
 }
-
-export default Emoji;
