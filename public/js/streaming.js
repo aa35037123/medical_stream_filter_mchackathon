@@ -38,111 +38,92 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var faceapi = require("face-api.js");
-function Home() {
-    var _this = this;
-    var webcamRef = (0, react_1.useRef)(null);
-    var _a = (0, react_1.useState)(false), isLoaded = _a[0], setIsLoaded = _a[1];
-    var loadModels = function () { return __awaiter(_this, void 0, void 0, function () {
-        var MODEL_URL;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    MODEL_URL = "/models";
-                    return [4 /*yield*/, Promise.all([
-                            faceapi.nets.tinyFaceDetector.load(MODEL_URL),
-                            faceapi.nets.faceExpressionNet.load(MODEL_URL),
-                        ])];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    }); };
-    var handleLoadWaiting = function () { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, new Promise(function (resolve) {
-                    var timer = setInterval(function () {
-                        var _a, _b;
-                        if (((_b = (_a = webcamRef.current) === null || _a === void 0 ? void 0 : _a.video) === null || _b === void 0 ? void 0 : _b.readyState) == 4) {
-                            resolve(true);
-                            clearInterval(timer);
-                        }
-                    }, 500);
-                })];
-        });
-    }); };
-    function scoreExpression(expressions, scores) {
-        //console.log(scores);
-        var max = Math.max.apply(null, scores);
-        if (scores[0] == max) {
-            var neutral = scores.shift();
-            var second_1 = Math.max.apply(null, scores);
-            if (max / second_1 > 2 && second_1 != 0)
-                return expressions[0];
-            else
-                return expressions[scores.findIndex(function (score) { return score === second_1; })];
+var webcamRef = (0, react_1.useRef)(null);
+var _a = (0, react_1.useState)(false), isLoaded = _a[0], setIsLoaded = _a[1];
+var loadModels = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var MODEL_URL;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                MODEL_URL = "/models";
+                return [4 /*yield*/, Promise.all([
+                        faceapi.nets.tinyFaceDetector.load(MODEL_URL),
+                        faceapi.nets.faceExpressionNet.load(MODEL_URL),
+                    ])];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
         }
-        else {
-            var index = scores.findIndex(function (score) { return score === max; });
-            return expressions[index];
-        }
+    });
+}); };
+function scoreExpression(expressions, scores) {
+    //console.log(scores);
+    var max = Math.max.apply(null, scores);
+    if (scores[0] == max) {
+        var neutral = scores.shift();
+        var second_1 = Math.max.apply(null, scores);
+        if (max / second_1 > 2 && second_1 != 0)
+            return expressions[0];
+        else
+            return expressions[scores.findIndex(function (score) { return score === second_1; })];
     }
-    var faceDetectHandler = function () { return __awaiter(_this, void 0, void 0, function () {
-        var webcam, video_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, loadModels()];
-                case 1:
-                    _a.sent();
-                    return [4 /*yield*/, handleLoadWaiting()];
-                case 2:
-                    _a.sent();
-                    if (webcamRef.current) {
-                        setIsLoaded(true);
-                        webcam = webcamRef.current.video;
-                        webcam.width = webcam.videoWidth;
-                        webcam.height = webcam.videoHeight;
-                        video_1 = webcamRef.current.video;
-                        (function detect() {
-                            return __awaiter(this, void 0, void 0, function () {
-                                var detectionsWithExpressions, images_series, _loop_1, i;
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0: return [4 /*yield*/, faceapi
-                                                .detectAllFaces(video_1, new faceapi.TinyFaceDetectorOptions())
-                                                .withFaceExpressions()];
-                                        case 1:
-                                            detectionsWithExpressions = _a.sent();
-                                            if (detectionsWithExpressions.length > 0) {
-                                                _loop_1 = function (i) {
-                                                    var Array_1 = Object.entries(detectionsWithExpressions[i].expressions);
-                                                    var expressionsArray = Array_1.map(function (j) { return j[0]; });
-                                                    var scoresArray = Array_1.map(function (i) { return i[1]; });
-                                                    var max = Math.max.apply(null, scoresArray);
-                                                    var index = scoresArray.findIndex(function (score) { return score === max; });
-                                                    var expression = scoreExpression(expressionsArray, scoresArray);
-                                                    // const log = scoresArray.map((element, index)=>{
-                                                    //   return `${expressionsArray[index]} : ${element}`
-                                                    //});
-                                                    console.log(expression);
-                                                };
-                                                for (i = 0; i < detectionsWithExpressions.length; i++) {
-                                                    _loop_1(i);
-                                                }
-                                            }
-                                            return [2 /*return*/];
-                                    }
-                                });
-                            });
-                        })();
-                    }
-                    return [2 /*return*/];
-            }
-        });
-    }); };
-    (0, react_1.useEffect)(function () {
-        faceDetectHandler();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    else {
+        var index = scores.findIndex(function (score) { return score === max; });
+        return expressions[index];
+    }
 }
-exports.default = Home;
+var faceDetectHandler = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var webcam, video_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, loadModels()];
+            case 1:
+                _a.sent();
+                //await handleLoadWaiting();
+                if (webcamRef.current) {
+                    setIsLoaded(true);
+                    webcam = webcamRef.current.video;
+                    webcam.width = webcam.videoWidth;
+                    webcam.height = webcam.videoHeight;
+                    video_1 = webcamRef.current.video;
+                    (function detect() {
+                        return __awaiter(this, void 0, void 0, function () {
+                            var detectionsWithExpressions, _loop_1, i;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, faceapi
+                                            .detectAllFaces(video_1, new faceapi.TinyFaceDetectorOptions())
+                                            .withFaceExpressions()];
+                                    case 1:
+                                        detectionsWithExpressions = _a.sent();
+                                        if (detectionsWithExpressions.length > 0) {
+                                            _loop_1 = function (i) {
+                                                var Array_1 = Object.entries(detectionsWithExpressions[i].expressions);
+                                                var expressionsArray = Array_1.map(function (j) { return j[0]; });
+                                                var scoresArray = Array_1.map(function (i) { return i[1]; });
+                                                var max = Math.max.apply(null, scoresArray);
+                                                var index = scoresArray.findIndex(function (score) { return score === max; });
+                                                var expression = scoreExpression(expressionsArray, scoresArray);
+                                                // const log = scoresArray.map((element, index)=>{
+                                                //   return `${expressionsArray[index]} : ${element}`
+                                                //});
+                                                console.log(expression);
+                                            };
+                                            for (i = 0; i < detectionsWithExpressions.length; i++) {
+                                                _loop_1(i);
+                                            }
+                                        }
+                                        return [2 /*return*/];
+                                }
+                            });
+                        });
+                    })();
+                }
+                return [2 /*return*/];
+        }
+    });
+}); };
+(0, react_1.useEffect)(function () {
+    faceDetectHandler();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);

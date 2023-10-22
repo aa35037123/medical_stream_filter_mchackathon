@@ -1,30 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import Head from "next/head";
 import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 
-const Emoji = () => {
-  const webcamRef = useRef<Webcam>(null);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+const webcamRef = useRef<Webcam>(null);
+const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-  const loadModels = async () => {
-    const MODEL_URL = `../models`;
+const loadModels = async () => {
+    const MODEL_URL = `/models`;
     await Promise.all([
       faceapi.nets.tinyFaceDetector.load(MODEL_URL),
       faceapi.nets.faceExpressionNet.load(MODEL_URL),
     ]);
-  };
-
-  const handleLoadWaiting = async () => {
-    return new Promise((resolve) => {
-      const timer = setInterval(() => {
-        if (webcamRef.current?.video?.readyState == 4) {
-          resolve(true);
-          clearInterval(timer);
-        }
-      }, 500);
-    });
-  };
+};
   function scoreExpression(expressions, scores){
     //console.log(scores);
     const max = Math.max.apply(null, scores);
@@ -45,7 +32,7 @@ const Emoji = () => {
   }
   const faceDetectHandler = async () => {
     await loadModels();
-    await handleLoadWaiting();
+    //await handleLoadWaiting();
     if (webcamRef.current) {
       setIsLoaded(true);
       const webcam = webcamRef.current.video as HTMLVideoElement;
@@ -56,7 +43,6 @@ const Emoji = () => {
         const detectionsWithExpressions = await faceapi
           .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
           .withFaceExpressions();
-        let images_series;
         if (detectionsWithExpressions.length > 0) {
           for (let i = 0; i < detectionsWithExpressions.length ; i++) {
             const Array = Object.entries(detectionsWithExpressions[i].expressions);
@@ -73,12 +59,9 @@ const Emoji = () => {
         }
       })();
     }
-  };
+ };
 
-  useEffect(() => {
+useEffect(() => {
     faceDetectHandler();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-}
-
-export default Emoji;
+}, []);
