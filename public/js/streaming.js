@@ -56,6 +56,19 @@ var loadModels = function () { return __awaiter(void 0, void 0, void 0, function
         }
     });
 }); };
+var handleLoadWaiting = function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/, new Promise(function (resolve) {
+                var timer = setInterval(function () {
+                    var _a, _b;
+                    if (((_b = (_a = webcamRef.current) === null || _a === void 0 ? void 0 : _a.video) === null || _b === void 0 ? void 0 : _b.readyState) == 4) {
+                        resolve(true);
+                        clearInterval(timer);
+                    }
+                }, 500);
+            })];
+    });
+}); };
 function scoreExpression(expressions, scores) {
     //console.log(scores);
     var max = Math.max.apply(null, scores);
@@ -72,58 +85,57 @@ function scoreExpression(expressions, scores) {
         return expressions[index];
     }
 }
-var faceDetectHandler = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var webcam, video_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, loadModels()];
-            case 1:
-                _a.sent();
-                //await handleLoadWaiting();
-                if (webcamRef.current) {
-                    setIsLoaded(true);
-                    webcam = webcamRef.current.video;
-                    webcam.width = webcam.videoWidth;
-                    webcam.height = webcam.videoHeight;
-                    video_1 = webcamRef.current.video;
-                    (function detect() {
-                        return __awaiter(this, void 0, void 0, function () {
-                            var detectionsWithExpressions, _loop_1, i;
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, faceapi
-                                            .detectAllFaces(video_1, new faceapi.TinyFaceDetectorOptions())
-                                            .withFaceExpressions()];
-                                    case 1:
-                                        detectionsWithExpressions = _a.sent();
-                                        if (detectionsWithExpressions.length > 0) {
-                                            _loop_1 = function (i) {
-                                                var Array_1 = Object.entries(detectionsWithExpressions[i].expressions);
-                                                var expressionsArray = Array_1.map(function (j) { return j[0]; });
-                                                var scoresArray = Array_1.map(function (i) { return i[1]; });
-                                                var max = Math.max.apply(null, scoresArray);
-                                                var index = scoresArray.findIndex(function (score) { return score === max; });
-                                                var expression = scoreExpression(expressionsArray, scoresArray);
-                                                // const log = scoresArray.map((element, index)=>{
-                                                //   return `${expressionsArray[index]} : ${element}`
-                                                //});
-                                                console.log(expression);
-                                            };
-                                            for (i = 0; i < detectionsWithExpressions.length; i++) {
-                                                _loop_1(i);
-                                            }
-                                        }
-                                        return [2 /*return*/];
-                                }
-                            });
-                        });
-                    })();
+Detection = function() {
+    function faceDetectHandler() {
+        return __awaiter(this, void 0, void 0, function () {
+            var webcam, video, detectionsWithExpressions, _loop_1, i, state_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, loadModels()];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, handleLoadWaiting()];
+                    case 2:
+                        _a.sent();
+                        if (!webcamRef.current) return [3 /*break*/, 4];
+                        setIsLoaded(true);
+                        webcam = webcamRef.current.video;
+                        webcam.width = webcam.videoWidth;
+                        webcam.height = webcam.videoHeight;
+                        video = webcamRef.current.video;
+                        return [4 /*yield*/, faceapi
+                                .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+                                .withFaceExpressions()];
+                    case 3:
+                        detectionsWithExpressions = _a.sent();
+                        if (detectionsWithExpressions.length > 0) {
+                            _loop_1 = function (i) {
+                                var Array_1 = Object.entries(detectionsWithExpressions[i].expressions);
+                                var expressionsArray = Array_1.map(function (j) { return j[0]; });
+                                var scoresArray = Array_1.map(function (i) { return i[1]; });
+                                var max = Math.max.apply(null, scoresArray);
+                                var index = scoresArray.findIndex(function (score) { return score === max; });
+                                var expression = scoreExpression(expressionsArray, scoresArray);
+                                // const log = scoresArray.map((element, index)=>{
+                                //   return `${expressionsArray[index]} : ${element}`
+                                //});
+                                console.log(expression);
+                                return { value: expression };
+                            };
+                            for (i = 0; i < detectionsWithExpressions.length; i++) {
+                                state_1 = _loop_1(i);
+                                if (typeof state_1 === "object")
+                                    return [2 /*return*/, state_1.value];
+                            }
+                        }
+                        else
+                            return [2 /*return*/, "No detect"];
+                        return [3 /*break*/, 5];
+                    case 4: return [2 /*return*/, "No detect"];
+                    case 5: return [2 /*return*/];
                 }
-                return [2 /*return*/];
-        }
-    });
-}); };
-(0, react_1.useEffect)(function () {
+            });
+        });
+    }
     faceDetectHandler();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
+}

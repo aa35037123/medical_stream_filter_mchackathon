@@ -3,15 +3,12 @@
 <head>
     <meta name="description" content="Mask Emoji to your face" />
     <meta property="og:image" key="ogImage" content="../emojis/happy.png" />
-    <link rel="icon" href=".../emojis/happy.png" />
+    <link rel="icon" href="../emojis/happy.png" />
     <title>Face2Emoji</title>
 </head>
 <body>
-    <script src="../js/streaming.js"></script>
-    <article>
-        <h1>CCC</h1>
-        <p>Test</p>
-    </article>
-    <Webcam audio={false} ref={webcamRef} />
+    <script type="module" src="../js/streaming.js"></script>
+    <button onclick="Detection()">Start Detecting...</button>
+    <!-- <Webcam audio={false} ref={webcamRef} /> -->
 </body>
 </html>

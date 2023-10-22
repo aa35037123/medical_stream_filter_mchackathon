@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 
@@ -12,6 +12,17 @@ const loadModels = async () => {
       faceapi.nets.faceExpressionNet.load(MODEL_URL),
     ]);
 };
+
+const handleLoadWaiting = async () => {
+    return new Promise((resolve) => {
+      const timer = setInterval(() => {
+        if (webcamRef.current?.video?.readyState == 4) {
+          resolve(true);
+          clearInterval(timer);
+        }
+      }, 500);
+    });
+  };
   function scoreExpression(expressions, scores){
     //console.log(scores);
     const max = Math.max.apply(null, scores);
@@ -30,17 +41,18 @@ const loadModels = async () => {
     }
 
   }
-  const faceDetectHandler = async () => {
+function Detection(){
+  
+  async function faceDetectHandler(){
     await loadModels();
-    //await handleLoadWaiting();
+    await handleLoadWaiting();
     if (webcamRef.current) {
       setIsLoaded(true);
       const webcam = webcamRef.current.video as HTMLVideoElement;
       webcam.width = webcam.videoWidth;
       webcam.height = webcam.videoHeight;
       const video = webcamRef.current.video;
-      (async function detect() {
-        const detectionsWithExpressions = await faceapi
+      const detectionsWithExpressions = await faceapi
           .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
           .withFaceExpressions();
         if (detectionsWithExpressions.length > 0) {
@@ -55,13 +67,14 @@ const loadModels = async () => {
             //   return `${expressionsArray[index]} : ${element}`
             //});
             console.log(expression);
+            return expression;
+          }
         }
-        }
-      })();
+        else return "No detect";
     }
- };
-
-useEffect(() => {
+    else 
+      return "No detect";
+    
+    }
     faceDetectHandler();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
+  }
